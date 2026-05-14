@@ -1,0 +1,25 @@
+# Dependencies — reinstalled inside Docker
+node_modules
+
+# Compiled output — rebuilt inside Docker
+dist
+
+# Environment files — never bake secrets into the image
+.env
+.env.*
+!.env.production.example
+
+# Drizzle snapshot metadata — not needed at runtime
+drizzle/meta
+
+# Dev / editor artefacts
+.git
+.gitignore
+*.log
+npm-debug.log*
+coverage
+.DS_Store
+
+# Docs
+docs
+README.md

@@ -1,0 +1,22 @@
+CREATE TABLE "production_planning_entries" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"timestamp" timestamp with time zone DEFAULT now() NOT NULL,
+	"serial_no" text NOT NULL,
+	"order_no" text NOT NULL,
+	"melting_type" text NOT NULL,
+	"karigar_name" text DEFAULT '',
+	"category" text DEFAULT '',
+	"design_code" text DEFAULT '',
+	"total_weight" numeric(12, 3) NOT NULL,
+	"customer" text DEFAULT '',
+	"dept" text NOT NULL,
+	"planned_weight" numeric(12, 3) NOT NULL,
+	"wastage_percent" numeric(5, 2) DEFAULT '0.00',
+	"planned_status" text DEFAULT 'Planned' NOT NULL,
+	"issue_timestamp" timestamp with time zone,
+	"issue_ref" text DEFAULT '',
+	"issue_weight" numeric(12, 3) DEFAULT '0.000' NOT NULL,
+	"remaining_weight" numeric(12, 3) NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
+);

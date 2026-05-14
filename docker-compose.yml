@@ -1,0 +1,61 @@
+# ─────────────────────────────────────────────────────────────
+#  Production Docker Compose — AWS EC2
+#  Usage:
+#    cp .env.production.example .env.production
+#    # fill in .env.production with real values
+#    docker compose up -d
+# ─────────────────────────────────────────────────────────────
+
+services:
+
+  # ── 1. DB Migration ────────────────────────────────────────
+  # Uses the "builder" stage (has drizzle-kit + tsx available).
+  # Runs once, applies any pending SQL migrations, then exits.
+  migrate:
+    build:
+      context: .
+      target: builder
+    command: ["npx", "drizzle-kit", "migrate"]
+    env_file:
+      - .env.production
+    restart: "no"
+    networks:
+      - backend_net
+
+  # ── 2. API Server ──────────────────────────────────────────
+  api:
+    build:
+      context: .
+      target: production
+    container_name: erp_api
+    restart: unless-stopped
+    env_file:
+      - .env.production
+    ports:
+      - "5050:5050"          # change left side to 80 if behind Nginx directly
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    networks:
+      - backend_net
+    healthcheck:
+      test:
+        - "CMD"
+        - "wget"
+        - "--no-verbose"
+        - "--tries=1"
+        - "--spider"
+        - "http://localhost:5050/health"
+      interval: 30s
+      timeout: 10s
+      start_period: 30s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+networks:
+  backend_net:
+    driver: bridge
