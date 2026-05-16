@@ -35,6 +35,8 @@ export const userRepository = {
 
   async create(data: NewUser) {
     const [created] = await db.insert(users).values(data).returning();
+    if (!created) return undefined;
+
     const { passwordHash: _p, ...safe } = created;
     return safe;
   },
